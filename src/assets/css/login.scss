@@ -1,0 +1,16 @@
+.login {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #334455;
+    .box {
+        width: 550px;
+        height: 420px;
+        background-color: white;
+        padding: 35px;
+        .my-btn {
+            width: 100%;
+        }
+    }
+}
