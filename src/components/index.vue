@@ -9,7 +9,7 @@
                     <h2>黑买后台管理系统</h2>
                 </el-col>
                 <el-col :span="1">
-                    <el-button type="success">退出</el-button>
+                    <el-button type="success" @click="logout">退出</el-button>
                 </el-col>
             </el-row>
         </el-header>
@@ -28,7 +28,6 @@
                 </el-menu>  
             </el-aside>
             <el-main class="my-main">
-
                 <router-view></router-view>
             </el-main>
         </el-container>
@@ -38,7 +37,20 @@
 <script>
 export default {
     name:"index",
-
+    methods: {
+        logout(){
+            window.sessionStorage.removeItem("token");
+            this.$router.push("/login")
+        }
+    },
+    beforeCreate() {
+        if(window.sessionStorage.getItem("token")){
+            console.log("");
+        }else{
+            this.$message.error("哥们,请先登录");
+            this.$router.push("/login");
+        }
+    },
 }
 </script>
 
