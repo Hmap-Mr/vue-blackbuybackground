@@ -15,7 +15,7 @@
             <el-table-column label="订单编号" width="300" prop="email"></el-table-column>
             <el-table-column label="订单价格" width="80" prop="mobile"></el-table-column>
             <el-table-column label="是否付款" width="120" prop="mobile">
-                <template slot-scope="scope">
+                <template >
                     <el-button type="danger" size="mini" plain title="未付款">未付款</el-button>
                 </template>
             </el-table-column>
