@@ -16,15 +16,15 @@
         <el-container class="my-container">
             <el-aside class="my-aside">
                 <el-menu router default-active="2" class="el-menu-vertical-demo">
-                    <el-submenu index="1">
+                    <el-submenu v-for="(item,index) in menuslist" :index="item.id+''" :key="index">
                         <template slot="title">
                           <i class="el-icon-location"></i>
-                          <span>导航一</span>
+                          <span>{{ item.authName }}</span>
                         </template>
-                        <el-menu-item index="/user">
-                            <span class="el-icon-menu"></span> 选项1
+                        <el-menu-item v-for="(it,i) in item.children" :index="'/'+it.path" :key="i">
+                            <span class="el-icon-menu"></span> {{ it.authName}}
                         </el-menu-item>
-                      </el-submenu>
+                    </el-submenu>
                 </el-menu>  
             </el-aside>
             <el-main class="my-main">
@@ -32,16 +32,29 @@
             </el-main>
         </el-container>
     </el-container>
+    
 </template>
 
 <script>
 export default {
     name:"index",
+    data(){
+        return {
+            menuslist:[],
+        }
+    },
     methods: {
+        // 登出
         logout(){
             window.sessionStorage.removeItem("token");
             this.$router.push("/login")
+        },
+        async getRights(){
+            let res = await this.$axios.get("menus");
+            // console.log(res);
+            this.menuslist = res.data.data;
         }
+
     },
     beforeCreate() {
         if(window.sessionStorage.getItem("token")){
@@ -50,6 +63,9 @@ export default {
             this.$message.error("哥们,请先登录");
             this.$router.push("/login");
         }
+    },
+    created() {
+        this.getRights();
     },
 }
 </script>

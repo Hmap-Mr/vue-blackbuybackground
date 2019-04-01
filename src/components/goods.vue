@@ -1,20 +1,20 @@
 <template>
     <div>
         <!-- 面包屑 -->
-        <my-bread _2title="用户管理" _3title="用户列表"></my-bread>
+        <my-bread _2title="商品管理" _3title="商品列表"></my-bread>
         <!-- 输入框 -->
         <el-row>
             <el-col :span="6">
-                <el-input placeholder="请输入用户名查找" v-model="sendData.query" class="input-with-select" @keyup.native.enter="search">
-                <el-button slot="append" icon="el-icon-search" @click="search" @keyup.native.enter="search"></el-button>
-            </el-input>
+                <el-input placeholder="请输入用户名查找"  class="input-with-select" @keyup.native.enter="search">
+                    <el-button slot="append" icon="el-icon-search" @click="search" @keyup.native.enter="search"></el-button>
+                </el-input>
             </el-col>
             <el-col :span="12">
-                <el-button type="success" plain @click.native="addFormVisible = true">添加用户</el-button>
+                <el-button type="success" plain @click.native="addFormVisible = true">添加商品</el-button>
             </el-col>
         </el-row>
         <!-- 表格 -->
-        <el-table :data="userList" style="width: 100%" border>
+        <el-table :data="goodList" style="width: 100%" border>
             <!-- <el-table-column label="#" width="30">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.$index+1 }}</span>
@@ -22,31 +22,19 @@
             </el-table-column> -->
             <el-table-column label="#" type="index" width="40"></el-table-column>
             <el-table-column label="ID" width="80" prop="id"></el-table-column>
-            <el-table-column label="用户名" width="160" prop="username"></el-table-column>
-            <el-table-column label="类型" width="160" prop="role_name"></el-table-column>
-            <el-table-column label="邮箱" width="300" prop="email"></el-table-column>
-            <el-table-column label="电话" width="300" prop="mobile"></el-table-column>
-            <el-table-column label="用户状态" width="80">
-                <template slot-scope="scope">
-                    <el-switch
-                        v-model="scope.row.mg_state"
-                        active-color="#13ce66"
-                        inactive-color="#ff4949" 
-                        @click.native="stateChange(scope.row)"
-                        :title="scope.row.mg_state?'可使用':'被禁用'">
-                    </el-switch>
-                </template>
-            </el-table-column>
+            <el-table-column label="商品名称" width="600" prop="email"></el-table-column>
+            <el-table-column label="商品价格(元)" width="120" prop="mobile"></el-table-column>
+            <el-table-column label="商品重量" width="120" prop="mobile"></el-table-column>
+            <el-table-column label="创建时间" width="180" prop="mobile"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="primary" @click.native="handleEdit(scope.$index,scope.row)" icon="el-icon-edit" size="mini" plain title="编辑"></el-button>
                     <el-button type="danger"  @click="delOne(scope.row)" icon="el-icon-delete" size="mini" plain title="删除"></el-button>
-                    <el-button type="warning" @click="roleChange(scope.row)" icon="el-icon-check" size="mini" plain title="分配角色"></el-button>
                 </template>
             </el-table-column>
         </el-table>
         <!-- 分页 -->
-        <div class="block">
+        <!-- <div class="block">
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -56,30 +44,31 @@
               layout="total, sizes, prev, pager, next, jumper"
               :total="total">
             </el-pagination>
-        </div>
+        </div> -->
+
         <!-- 新增弹框 -->
-        <el-dialog title="添加用户" :visible.sync="addFormVisible">
-          <el-form :model="addForm" ref="addForm" :rules="addRules">
+        <!--<el-dialog title="添加用户" :visible.sync="addFormVisible">
+          <el-form :model="addForm" ref="addForm" >
             <el-form-item label="用户名"  prop="username" label-width="100px">
-              <el-input v-model="addForm.username" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
             <el-form-item label="密码"  prop="password" label-width="100px">
-              <el-input v-model="addForm.password" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
             <el-form-item label="邮箱" label-width="100px">
-              <el-input v-model="addForm.email" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
             <el-form-item label="电话" label-width="100px">
-              <el-input v-model="addForm.mobile" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="addFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="submitAdd('addForm')">确 定</el-button>
           </div>
-        </el-dialog>
+        </el-dialog> -->
         <!-- 修改弹框 -->
-        <el-dialog title="编辑用户" :visible.sync="editFormVisible">
+        <!-- <el-dialog title="编辑用户" :visible.sync="editFormVisible">
           <el-form :model="editForm" ref="addForm" :rules="addRules">
             <el-form-item label="用户名" prop="username" label-width="100px">
               <el-input v-model="editForm.username" autocomplete="off" disabled></el-input>
@@ -95,9 +84,9 @@
             <el-button @click="editFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="submitEdit('editForm')">确 定</el-button>
           </div>
-        </el-dialog>
+        </el-dialog> -->
         <!-- 分配角色弹框 -->
-        <el-dialog title="角色分配" :visible.sync="roleFormVisible">
+        <!-- <el-dialog title="角色分配" :visible.sync="roleFormVisible">
             <el-form :model="roleForm">
               <el-form-item label="当前用户" label-width="100px">
                 <el-input v-model="editUser.username" autocomplete="off" disabled></el-input>
@@ -112,72 +101,25 @@
               <el-button @click="roleFormVisible = false">取 消</el-button>
               <el-button type="primary" @click="submitRole()">确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+
     </div>
 </template>
 
 <script>
 export default {
-    name:"user",
+    name:"roles",
     data() {
       return {
-        sendData:{
-            query:"",
-            pagenum:1,
-            pagesize:5,
-        },
-        total:0,
-        userList:[],
-        // 新增
-        addFormVisible:false,
-        addForm:{
-            username:"士兵1号",
-            password:"123456",
-            email:"soldier@soldier.com",
-            mobile:"19888888888",
-        },
-        addRules:{
-            username:[
-                {required:true, message:"用户名不能为空", trigger:"blur"},
-                {min:4, max:16, message:"密码长度为4-16个字符", trigger:"blur"},
-            ],
-            password:[
-                {required:true, message:"密码不能为空", trigger:"blur"},
-                {min:6, max:16, message:"密码长度为6-16个字符", trigger:"blur"},
-            ],
-        },
-        // 修改
-        editFormVisible:false,
-        editForm:{
-            username:"将军",
-            email:"General@General.com",
-            mobile:"188888888888",           
-        },
-        // 分配角色
-        roleFormVisible:false,
-        roleForm:{
-            username:"将军",
-            role:"",
-        },
-        // 分配角色 保存 当前用户信息
-        editUser:{},
-        roleList:[],
-
+          goodList:[
+              {},{}
+          ]
       }
     },
     created() {
         this.search();
     },
     methods: {
-        // 页码
-        handleSizeChange(size){
-            this.sendData.pagesize = size;
-            this.search();
-        },
-        handleCurrentChange(current){
-            this.sendData.pagenum = current;
-            this.search();
-        },
         async handleEdit(index,row){
             // console.log(index);
             // console.log(row);
@@ -284,14 +226,5 @@ export default {
 </script>
 
 <style lang="scss">
-    .topbar{
-        height: 50px;
-        box-sizing: border-box;
-        padding: 10px 0;
-        line-height: 50px;
-        background-color: #ddddee;
-        >div{
-            line-height: 30px;
-        }
-    }
+
 </style>

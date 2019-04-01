@@ -57,7 +57,7 @@ export default {
                         this.$message.success(res.data.meta.msg);
                         window.sessionStorage.setItem("token",res.data.data.token);
                         // 编程式导航
-                        this.$router.push("/user");
+                        this.$router.push("/users");
                     }
                 }else{
                     this.$message.error("数据格式错误,请根据提示修改!");
