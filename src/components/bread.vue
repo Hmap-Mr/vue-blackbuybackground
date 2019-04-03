@@ -25,6 +25,7 @@ export default {
         background-color: #ddddee;
         >div{
             line-height: 30px;
+            margin-left: 20px;
         }
     }
 </style>

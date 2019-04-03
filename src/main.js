@@ -9,34 +9,23 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+// 导入全局 过滤器
+import moment from 'moment'
+Vue.filter("formatTime",function(value,temp="YYYY-MM-DD"){
+  return moment(value).format(temp)
+})
+
 // 导入面包屑组件
 import myBread from './components/bread.vue'
 Vue.component('my-bread',myBread)
 
-// 导入axios
-import axios from 'axios'
-axios.defaults.baseURL = "http://localhost:8888/api/private/v1/"; //设置基地址
-axios.interceptors.request.use(//请求拦截
-  (config)=>{
-    config.headers.Authorization = window.sessionStorage.getItem("token");
-    return config
-  },(error)=>{
-    return Promise.reject(error)
-  }
-);
-axios.interceptors.response.use(//响应拦截
-  (response)=>{
-    if([200,201,204].indexOf(response.data.meta.status) != -1){
-      Vue.prototype.$message.success(response.data.meta.msg);
-    }else{
-      Vue.prototype.$message.warning(response.data.meta.msg);      
-    }
-    return response;
-  },(error)=>{
-    return Promise.reject(error);
-  }
-);
-Vue.prototype.$axios = axios;
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts;
+
+// 导入自己封装的 axios 插件
+import axios from './myaxios.js'
+Vue.use(axios)
+
 
 // 导入路由
 import router from './router.js'

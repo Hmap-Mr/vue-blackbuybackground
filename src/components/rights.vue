@@ -11,80 +11,16 @@
                 </template>
             </el-table-column> -->
             <el-table-column label="#" type="index" width="40"></el-table-column>
-            <el-table-column label="ID" width="80" prop="id"></el-table-column>
-            <el-table-column label="权限名称" width="300" prop="username"></el-table-column>
-            <el-table-column label="路径" width="180" prop="role_name"></el-table-column>
-            <el-table-column label="层级" width="160" prop="role_name"></el-table-column>
+            <el-table-column label="权限名称" prop="authName" width="300" ></el-table-column>
+            <el-table-column label="路径" prop="path" width="180" ></el-table-column>
+            <el-table-column label="层级" prop="level" width="160" >
+                <template slot-scope="scope">
+                    <span v-if="scope.row.level==='0'" style="margin-left: 10px">一级</span>
+                    <span v-else-if="scope.row.level==='1'" style="margin-left: 10px">二级</span>
+                    <span v-else-if="scope.row.level==='2'" style="margin-left: 10px">三级</span>
+                </template>
+            </el-table-column>
         </el-table>
-        <!-- 分页 -->
-        <!-- <div class="block">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="sendData.pagenum"
-              :page-sizes="[3, 5, 8, 10]"
-              :page-size="sendData.pagesize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total">
-            </el-pagination>
-        </div> -->
-
-        <!-- 新增弹框 -->
-        <!--<el-dialog title="添加用户" :visible.sync="addFormVisible">
-          <el-form :model="addForm" ref="addForm" >
-            <el-form-item label="用户名"  prop="username" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="密码"  prop="password" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="电话" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="addFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="submitAdd('addForm')">确 定</el-button>
-          </div>
-        </el-dialog> -->
-        <!-- 修改弹框 -->
-        <!-- <el-dialog title="编辑用户" :visible.sync="editFormVisible">
-          <el-form :model="editForm" ref="addForm" :rules="addRules">
-            <el-form-item label="用户名" prop="username" label-width="100px">
-              <el-input v-model="editForm.username" autocomplete="off" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱" label-width="100px">
-              <el-input v-model="editForm.email" autocomplete="off" @keyup.native.enter="submitEdit('editForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="电话" label-width="100px">
-              <el-input v-model="editForm.mobile" autocomplete="off" @keyup.native.enter="submitEdit('editForm')"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="editFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="submitEdit('editForm')">确 定</el-button>
-          </div>
-        </el-dialog> -->
-        <!-- 分配角色弹框 -->
-        <!-- <el-dialog title="角色分配" :visible.sync="roleFormVisible">
-            <el-form :model="roleForm">
-              <el-form-item label="当前用户" label-width="100px">
-                <el-input v-model="editUser.username" autocomplete="off" disabled></el-input>
-              </el-form-item>
-              <el-form-item label="请选择角色" label-width="100px">
-                <el-select v-model="editUser.role_name" placeholder="请选择角色">
-                  <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-              <el-button @click="roleFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="submitRole()">确 定</el-button>
-            </div>
-        </el-dialog> -->
 
     </div>
 </template>
@@ -118,14 +54,10 @@ export default {
         },
         // 搜索 获取数据
         async search(){
-            let res = await this.$axios.get("users",{
-                // headers:{  Authorization:window.sessionStorage.getItem("token")  },
-                params:this.sendData
-            });
-            // console.log(res);  
-            if(res.data.meta.status ==200){
-                this.userList = res.data.data.users;
-                this.total = res.data.data.total
+            let res = await this.$axios.get("rights/list");
+            console.log(res);  
+            if(res.data.meta.status == 200){
+                this.rightList = res.data.data;
             }else{
                 this.$message.error(res.data.meta.msg)
             }

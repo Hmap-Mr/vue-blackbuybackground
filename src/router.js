@@ -18,11 +18,13 @@ import categories from './components/categories.vue';
 import orders from './components/orders.vue';
 //  数据
 import reports from './components/reports.vue';
+// 404
+import error from './components/error.vue';
 
 
 
 let routes = [
-    { path:"/login",component:login},
+    { path:"/login",component:login,meta:{noLogin:true}},
     { path:"/index",component:index},
     { path:"/",component:index, children:[
         {path:"users",component:user},
@@ -33,11 +35,40 @@ let routes = [
         {path:"categories",component:categories},
         {path:"orders",component:orders},
         {path:"reports",component:reports},
-    ]}
+    ]},
+    { path:"/error",component:error},
 ];
 
 let router = new VueRouter({
     routes,
 });
+//注册全局 前置守卫 (导航守卫)
+/**
+ * to   去的 路由信息
+ * from 来的 路由信息
+ * next 继续向后执行
+ */
+router.beforeEach((to,from,next)=>{
+    // console.log(to);
+    // console.log(from);
+    //判断是否存在页面
+    if(to.matched.length==0){
+        next("/error");
+        Vue.prototype.$message.error('哥们, 你访问的网页不存在, 5秒后即将跳转登录页')
+    }else{
+        next();
+    }
+
+    if(to.meta.noLogin===true){
+        next();
+    }else{
+        if(window.sessionStorage.getItem("token")){
+            next();
+        }else{
+            Vue.prototype.$message.error('哥们,请先登录吧 我是导航守卫')
+            next("/login");
+        }
+    }
+})
 
 export default router;

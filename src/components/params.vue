@@ -1,13 +1,13 @@
 <template>
-    <div>
+    <div class='params-container'>
         <!-- 面包屑 -->
         <my-bread _2title="商品管理" _3title="分类参数"></my-bread>
         <!-- 警告 -->
-        <el-alert title="注意 : 只允许为第三级分类设置相关参数" type="warning"></el-alert>
+        <el-alert class="my-alert" title="注意 : 只允许为第三级分类设置相关参数!" type="warning" show-icon></el-alert>
         <!-- 级联选择器 -->
-        <el-row>
-            <el-col>
-                <span>请选择商品分类</span>
+        <el-row class="my-row">
+            <el-col :span="24">
+                <span>请选择商品分类:&nbsp;&nbsp;</span>
                 <el-cascader
                   expand-trigger="hover"
                   :options="options"
@@ -24,7 +24,7 @@
                     <el-tab-pane label="动态参数" name="first">
                         <el-row>
                             <el-col :span="6">
-                                <el-button type="primary" disabled>添加动态参数</el-button>
+                                <el-button class="my-btn" type="primary" disabled>添加动态参数</el-button>
                             </el-col>
                         </el-row>
                         <!-- 表格 -->
@@ -49,7 +49,7 @@
                     <el-tab-pane label="静态参数" name="second">
                         <el-row>
                             <el-col :span="6">
-                                <el-button type="primary" disabled>添加动态参数</el-button>
+                                <el-button class="my-btn" type="primary" disabled>添加动态参数</el-button>
                             </el-col>
                         </el-row>
                         <!-- 表格 -->
@@ -288,15 +288,25 @@ data() {
     },
     methods: {
         handleChange(value) {
-            console.log(value);
+            // console.log(value);
         },
         handleClick(tab, event) {
-            console.log(tab, event);
+            // console.log(tab, event);
         }
     }
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.params-container{
+  .my-alert{
+    margin: 20px 0;
+  }
+  .my-row{
+    margin-bottom: 20px;
+  }
+  .my-btn{
+    margin-bottom: 20px;
+  }
+}
 </style>
