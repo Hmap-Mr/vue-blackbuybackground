@@ -17,7 +17,7 @@ Vue.filter("formatTime",function(value,temp="YYYY-MM-DD"){
 
 // 导入面包屑组件
 import myBread from './components/bread.vue'
-Vue.component('my-bread',myBread)
+Vue.component('my-bread',myBread) 
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts;

@@ -9,7 +9,7 @@
             </el-col>
         </el-row>
         <!-- 表格 -->
-        <el-table :data="roleList" style="width: 100%" border>
+        <el-table :data="roleList" style="width: 100%" border :rowKey="1">
             <!-- <el-table-column label="#" width="30">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.$index+1 }}</span>
@@ -17,8 +17,8 @@
             </el-table-column> -->
             <el-table-column label="#" type="index" width="40"></el-table-column>
             <el-table-column label="ID" width="80" prop="id"></el-table-column>
-            <el-table-column label="角色名称" width="300" prop="email"></el-table-column>
-            <el-table-column label="角色描述" width="300" prop="mobile"></el-table-column>
+            <el-table-column label="角色名称" width="300" prop="roleName"></el-table-column>
+            <el-table-column label="角色描述" width="300" prop="roleDesc"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="primary" @click.native="handleEdit(scope.$index,scope.row)" icon="el-icon-edit" size="mini" plain title="编辑"></el-button>
@@ -41,18 +41,12 @@
         </div> -->
 
         <!-- 新增弹框 -->
-        <!--<el-dialog title="添加用户" :visible.sync="addFormVisible">
-          <el-form :model="addForm" ref="addForm" >
-            <el-form-item label="用户名"  prop="username" label-width="100px">
+        <el-dialog title="新增角色" :visible.sync="addFormVisible">
+          <el-form :model="addForm" ref="addForm" :rules="rules">
+            <el-form-item label="角色名称"  prop="roleName" label-width="100px">
               <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
-            <el-form-item label="密码"  prop="password" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="电话" label-width="100px">
+            <el-form-item label="角色描述"  prop="roleDesc" label-width="100px">
               <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
           </el-form>
@@ -60,7 +54,7 @@
             <el-button @click="addFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="submitAdd('addForm')">确 定</el-button>
           </div>
-        </el-dialog> -->
+        </el-dialog>
         <!-- 修改弹框 -->
         <!-- <el-dialog title="编辑用户" :visible.sync="editFormVisible">
           <el-form :model="editForm" ref="addForm" :rules="addRules">
@@ -107,7 +101,17 @@ export default {
       return {
           roleList:[
               {},{}
-          ]
+          ],
+          addFormVisible:false,
+          addForm:{
+              roleName:"",
+              roleDesc:"",
+          },
+          rules:{
+              roleName:[
+                  {required:true,message:"角色名称不能为空",trigger:"blur"}
+              ],
+          }
       }
     },
     created() {
@@ -129,14 +133,12 @@ export default {
         },
         // 搜索 获取数据
         async search(){
-            let res = await this.$axios.get("users",{
-                // headers:{  Authorization:window.sessionStorage.getItem("token")  },
-                params:this.sendData
-            });
-            // console.log(res);  
+            let res = await this.$axios.get("roles");
+            console.log(res);  
             if(res.data.meta.status ==200){
-                this.userList = res.data.data.users;
-                this.total = res.data.data.total
+                this.roleList = res.data.data;
+                console.log(this.roleList);
+                // this.total = res.data.data.total
             }else{
                 this.$message.error(res.data.meta.msg)
             }
@@ -152,7 +154,7 @@ export default {
             this.$refs[formName].validate(async valid=>{
                 if(valid){
                     // alert("submit!");
-                    let res = await this.$axios.post("users",this.addForm);
+                    let res = await this.$axios.post("roles",this.addForm);
                     if(res.data.meta.status === 201){
                         this.search();
                     }
