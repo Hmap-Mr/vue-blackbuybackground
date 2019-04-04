@@ -16,7 +16,7 @@
         <el-container class="my-container">
             <el-aside class="my-aside">
                 <el-menu router default-active="users" class="el-menu-vertical-demo">
-                    <el-submenu v-for="(item,index) in menuslist" :index="item.id+''" :key="index">
+                    <el-submenu v-for="(item,index) in $store.state.menuList" :index="item.id+''" :key="index">
                         <template slot="title">
                           <i class="el-icon-location"></i>
                           <span>{{ item.authName }}</span>
@@ -55,7 +55,8 @@ export default {
             if(res.data.meta.msg=='无效token' || res.data.meta.status == 400){
                 return false;
             }
-            this.menuslist = res.data.data;
+            // this.menuslist = res.data.data;
+            this.$store.commit("changeMenu",res.data.data)
         }
 
     },

@@ -9,7 +9,7 @@
             </el-col>
         </el-row>
         <!-- 表格 -->
-        <el-table :data="roleList" style="width: 100%" border :rowKey="1">
+        <el-table :data="roleList" style="width: 100%" border>
             <!-- <el-table-column label="#" width="30">
                 <template slot-scope="scope">
                     <span style="margin-left: 10px">{{ scope.$index+1 }}</span>
@@ -23,7 +23,7 @@
                 <template slot-scope="scope">
                     <el-button type="primary" @click.native="handleEdit(scope.$index,scope.row)" icon="el-icon-edit" size="mini" plain title="编辑"></el-button>
                     <el-button type="danger"  @click="delOne(scope.row)" icon="el-icon-delete" size="mini" plain title="删除"></el-button>
-                    <el-button type="warning" @click="roleChange(scope.row)" icon="el-icon-check" size="mini" plain title="分配角色"></el-button>
+                    <el-button type="warning" @click="showTree(scope.row)" icon="el-icon-check" size="mini" plain title="分配角色"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -44,10 +44,10 @@
         <el-dialog title="新增角色" :visible.sync="addFormVisible">
           <el-form :model="addForm" ref="addForm" :rules="rules">
             <el-form-item label="角色名称"  prop="roleName" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input v-model="addForm.roleName" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
             <el-form-item label="角色描述"  prop="roleDesc" label-width="100px">
-              <el-input  autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
+              <el-input v-model="addForm.roleDesc" autocomplete="off" @keyup.native.enter="submitAdd('addForm')"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -56,40 +56,36 @@
           </div>
         </el-dialog>
         <!-- 修改弹框 -->
-        <!-- <el-dialog title="编辑用户" :visible.sync="editFormVisible">
-          <el-form :model="editForm" ref="addForm" :rules="addRules">
-            <el-form-item label="用户名" prop="username" label-width="100px">
-              <el-input v-model="editForm.username" autocomplete="off" disabled></el-input>
+        <el-dialog title="编辑角色" :visible.sync="editFormVisible">
+          <el-form :model="editForm" ref="editForm" :rules="rules">
+            <el-form-item label="角色名称" prop="roleName" label-width="100px">
+              <el-input v-model="editForm.roleName" autocomplete="off" disabled></el-input>
             </el-form-item>
-            <el-form-item label="邮箱" label-width="100px">
-              <el-input v-model="editForm.email" autocomplete="off" @keyup.native.enter="submitEdit('editForm')"></el-input>
-            </el-form-item>
-            <el-form-item label="电话" label-width="100px">
-              <el-input v-model="editForm.mobile" autocomplete="off" @keyup.native.enter="submitEdit('editForm')"></el-input>
+            <el-form-item label="角色描述" prop="roleDesc" label-width="100px">
+              <el-input v-model="editForm.roleDesc" autocomplete="off" @keyup.native.enter="submitEdit('editForm')"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="editFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="submitEdit('editForm')">确 定</el-button>
           </div>
-        </el-dialog> -->
-        <!-- 分配角色弹框 -->
-        <!-- <el-dialog title="角色分配" :visible.sync="roleFormVisible">
-            <el-form :model="roleForm">
-              <el-form-item label="当前用户" label-width="100px">
-                <el-input v-model="editUser.username" autocomplete="off" disabled></el-input>
-              </el-form-item>
-              <el-form-item label="请选择角色" label-width="100px">
-                <el-select v-model="editUser.role_name" placeholder="请选择角色">
-                  <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
+        </el-dialog>
+        <!-- 树形菜单 弹框 -->
+        <el-dialog title="角色分配" :visible.sync="treeVisible">
+            <el-tree
+              :data="rightList"
+              show-checkbox
+              node-key="id"
+              default-expand-all
+              :default-checked-keys="checkedKeys"
+              :props="defaultProps"
+              ref="tree">
+            </el-tree>
             <div slot="footer" class="dialog-footer">
-              <el-button @click="roleFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="submitRole()">确 定</el-button>
+                <el-button @click="treeVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitTree()">确 定</el-button>
             </div>
-        </el-dialog> -->
+        </el-dialog>
 
     </div>
 </template>
@@ -99,19 +95,37 @@ export default {
     name:"roles",
     data() {
       return {
-          roleList:[
-              {},{}
-          ],
-          addFormVisible:false,
-          addForm:{
-              roleName:"",
-              roleDesc:"",
-          },
-          rules:{
-              roleName:[
-                  {required:true,message:"角色名称不能为空",trigger:"blur"}
-              ],
-          }
+        roleList:[
+            {},{}
+        ],
+        //  新增
+        addFormVisible:false,
+        addForm:{
+            roleName:"老板",
+            roleDesc:"催更",
+        },
+        rules:{
+            roleName:[
+                {required:true,message:"角色名称不能为空",trigger:"blur"}
+            ],
+        },
+        //  修改
+        editFormVisible:false,
+        editForm:{
+            roleId:0,
+            roleName:"",
+            roleDesc:"",
+        },
+        // 树形菜单
+        treeVisible:false,
+        rightList:[],
+        checkedKeys:[],
+        defaultProps:{
+            children:"children",
+            label:"authName"
+        },
+        // 当前被展示 操作的 树形对象
+        treeItem:{},
       }
     },
     created() {
@@ -121,8 +135,11 @@ export default {
         async handleEdit(index,row){
             // console.log(index);
             // console.log(row);
-            let res = await this.$axios.get(`users/${row.id}`);
-            this.editForm = res.data.data;
+            let res = await this.$axios.get(`roles/${row.id}`);
+            this.editForm.roleId = res.data.data.roleId;
+            this.editForm.roleName = res.data.data.roleName;
+            this.editForm.roleDesc = res.data.data.roleDesc;
+            console.log(this.editForm);
             if(res.data.meta.status === 200){
                 this.editFormVisible = true;
             }
@@ -134,10 +151,10 @@ export default {
         // 搜索 获取数据
         async search(){
             let res = await this.$axios.get("roles");
-            console.log(res);  
+            // console.log(res);  
             if(res.data.meta.status ==200){
                 this.roleList = res.data.data;
-                console.log(this.roleList);
+                // console.log(this.roleList);
                 // this.total = res.data.data.total
             }else{
                 this.$message.error(res.data.meta.msg)
@@ -166,15 +183,27 @@ export default {
             })
         },
         // 保存修改
-        async submitEdit(formName){
-            let res = await this.$axios.put(`user/${this.editFrom.id}`,{
-                email:this.editForm.email,
-                mobile:this.editForm.mobile,
-            })
-            if(res.data.meta.status === 200){
-                this.search();
-            }
-            this.editFormVisible = false;
+        submitEdit(formName){
+            this.$refs[formName].validate(async valid => {
+              if (valid) {
+                // 验证成功
+                let res = await this.$axios.put(
+                  `roles/${this.editForm.roleId}`,
+                  this.editForm
+                );
+                // console.log(res);
+                if (res.data.meta.status === 200) {
+                  this.search();
+                }
+
+                // 关闭对话框
+                this.editFormVisible = false;
+              } else {
+                // 失败
+                this.$message.warning("请正确输入数据");
+                return false;
+              }
+            });
         },
         // 删除用户
         delOne(row){
@@ -185,7 +214,7 @@ export default {
                 type: "warning"
             })
             .then(async ()=>{
-                let res = await this.$axios.delete(`user/${row.id}`);
+                let res = await this.$axios.delete(`roles/${row.id}`);
                 if(res.data.meta.status === 200){
                     this.search();
                 }
@@ -216,6 +245,50 @@ export default {
                 this.roleFormVisible = false;
                 this.search();
             }
+        },
+        async showTree(row){
+            console.log(row);
+            this.treeItem = row;
+            let res = await this.$axios.get("rights/tree");
+            this.rightList = res.data.data;
+            let checkedKeys = []
+            // row.children.forEach(ele => {
+            //     checkedIds.push(ele.id)
+            //     v.children.forEach(ele=>{
+
+            //     })
+            // });
+            function getCheckedKeys(item){
+                if(item.children){
+                    item.children.forEach(v=>{
+                        checkedKeys.push(v.id);
+                        getCheckedKeys(v);
+                    })
+                }
+            }
+            getCheckedKeys(row);
+            this.checkedKeys = checkedKeys;
+            this.treeVisible = true;
+        },
+        async submitTree(){
+            let rids = this.$refs.tree.getCheckedKeys().join(",");
+            let res = await this.$axios.post(`roles/${this.treeItem.id}/rights`,{
+                rids
+            })
+
+            let menus = await this.$axios.get("menus");
+            // console.log(res);
+            if(menus.data.meta.msg=='无效token' || menus.data.meta.status == 400){
+                return false;
+            }
+            // this.menuslist = res.data.data;
+            this.$store.commit("changeMenu",menus.data.data)
+            console.log(menus);
+            if(res.data.meta.status === 200){
+                this.search();
+            }
+            this.treeVisible = false;
+
         },
     },
 }

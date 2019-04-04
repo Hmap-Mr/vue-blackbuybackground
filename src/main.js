@@ -9,6 +9,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+import store from './store.js'
+
 // 导入全局 过滤器
 import moment from 'moment'
 Vue.filter("formatTime",function(value,temp="YYYY-MM-DD"){
@@ -33,5 +35,6 @@ import router from './router.js'
 // Vue.config.productionTip = false
 new Vue({
   router,
+  store,
   render: h => h(App),
 }).$mount('#app')
